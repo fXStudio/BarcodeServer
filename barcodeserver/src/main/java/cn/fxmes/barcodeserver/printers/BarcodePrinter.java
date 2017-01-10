@@ -1,5 +1,7 @@
 package cn.fxmes.barcodeserver.printers;
 
+import org.springframework.stereotype.Component;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -10,7 +12,8 @@ import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
  * 
  * @author Administrator
  */
-public class BarcodePrinter {
+@Component
+public final class BarcodePrinter {
 	/**
 	 * 报表打印
 	 *

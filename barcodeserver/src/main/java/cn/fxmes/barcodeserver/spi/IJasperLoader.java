@@ -1,5 +1,6 @@
 package cn.fxmes.barcodeserver.spi;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
 /**
@@ -10,5 +11,5 @@ import net.sf.jasperreports.engine.JasperReport;
  * @param <T>
  */
 public interface IJasperLoader {
-	public JasperReport get(String name);
+	public JasperReport get(String name) throws JRException;
 }
