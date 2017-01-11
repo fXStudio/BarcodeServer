@@ -1,11 +1,16 @@
 package cn.fxmes.barcodeserver.printers;
 
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.fxmes.barcodeserver.spi.IPrintServcieFinder;
+import cn.fxmes.barcodeserver.spi.IPrinter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
+import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
 
 /**
  * 条码打印工具类
@@ -13,17 +18,29 @@ import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
  * @author Administrator
  */
 @Component
-public final class BarcodePrinter {
+final class BarcodePrinter implements IPrinter {
+	private static Logger log = Logger.getLogger(BarcodePrinter.class);
+
+	private @Autowired IPrintServcieFinder printServcieFinder;
+
+	private JRPrintServiceExporter exporter = new JRPrintServiceExporter();
+
 	/**
 	 * 报表打印
 	 *
 	 * @param jasperPrint
 	 * @throws JRException
 	 */
-	public static void print(JasperPrint jasperPrint) throws JRException {
-		JRPrintServiceExporter exporter = new JRPrintServiceExporter();
+	@Override
+	public void print(JasperPrint jasperPrint, String printerName) throws JRException {
+		log.debug("Reqeust Print Method.");
+		log.debug("The jasperprint is: " + jasperPrint);
+
 		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRPrintServiceExporterParameter.PRINT_SERVICE,
+				printServcieFinder.getPrintService(printerName));
 
 		exporter.exportReport();
 	}
+
 }

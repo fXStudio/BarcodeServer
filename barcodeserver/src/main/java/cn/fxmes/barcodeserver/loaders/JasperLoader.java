@@ -2,6 +2,7 @@ package cn.fxmes.barcodeserver.loaders;
 
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
 
 import cn.fxmes.barcodeserver.spi.IJasperLoader;
@@ -13,6 +14,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Administrator
  */
 final class JasperLoader implements IJasperLoader {
+	private Logger log = Logger.getLogger(JasperLoader.class);
+
 	private String directory;
 
 	/**
@@ -23,6 +26,8 @@ final class JasperLoader implements IJasperLoader {
 	@Override
 	@Cacheable(cacheNames = "jaspers")
 	public JasperReport get(String name) throws JRException {
+		log.debug("Request log jasper template. The cache is not exists.");
+
 		InputStream in = null;
 		JasperReport jr = null;
 

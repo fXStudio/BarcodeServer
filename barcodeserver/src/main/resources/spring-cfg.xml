@@ -3,11 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<!-- 服务监听 -->
-	<bean id="socketServer" class="java.net.ServerSocket">
-		<constructor-arg value="64321" />
-	</bean>
-
 	<!-- 线程执行器 -->
 	<bean id="taskExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -16,15 +11,30 @@
 		<property name="queueCapacity" value="10" />
 	</bean>
 
-	<!-- 后台任务，负责接收Socket请求 -->
-	<bean id="socketTask" class="cn.fxmes.barcodeserver.tasks.SocketTask">
-		<constructor-arg name="taskExecutor" ref="taskExecutor" />
-		<constructor-arg name="serverSocket" ref="socketServer" />
-		
-		<property name="jasperName" value="FXMesBarcode.jasper" />
+	<!-- 服务监听 -->
+	<bean id="socketServer" class="java.net.ServerSocket">
+		<constructor-arg value="64321" />
 	</bean>
 
+	<!-- 报表资源加载工具 -->
 	<bean id="jasperLoader" class="cn.fxmes.barcodeserver.loaders.JasperLoader">
 		<property name="directory" value="resources" />
+	</bean>
+
+	<!-- 后台任务，负责接收Socket请求 -->
+	<bean id="socketTask" class="cn.fxmes.barcodeserver.tasks.SocketTask">
+		<constructor-arg name="serverSocket" ref="socketServer" />
+		<constructor-arg name="jasperName" value="FXMesBarcode.jasper" />
+		<constructor-arg name="jasperLoader" ref="jasperLoader" />
+	</bean>
+
+	<!-- 后台作业执行器 -->
+	<bean id="daemonExecutor" class="cn.fxmes.barcodeserver.executors.DaemonTaskExecutor">
+		<constructor-arg name="taskExecutor" ref="taskExecutor" />
+		<constructor-arg name="tasks">
+			<list>
+				<ref bean="socketTask" />
+			</list>
+		</constructor-arg>
 	</bean>
 </beans>
